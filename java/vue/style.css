@@ -1,0 +1,83 @@
+body{
+    background-color: #5c4090;
+    padding: 25px;
+}
+.header{ text-align: center; }
+#app{ margin: auto;}
+.header h1{
+    background: -webkit-linear-gradient(#fff,#8f70ba);
+    -webkit-text-fill-color: transparent;
+    -webkit-background-clip: text;
+    text-align: center;
+    font-weight: 900;
+    font-size: 3rem;
+    color: #fff;
+    margin-bottom: 30px;
+}
+.container{
+    padding: 6px;
+    background-color: #fff;
+    border-radius: 8px;
+    max-width: 800px;
+    box-shadow: 0 5px 8px #0000007a;
+}
+.gallery .activePhoto{
+    width: 100%;
+    margin-bottom: 5px;
+    padding-bottom: 65%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border: 2px solid #fff;
+    position: relative;
+}
+.gallery .activePhoto button{
+    border: none;
+    background-color: transparent;   /*背景透明 （默认）*/
+    font-size: 32px;
+    color: #fff;
+    opacity: 0.5; /*透明度*/
+    position: absolute;
+    outline: none;
+    height: 100%;
+}
+.gallery .activePhoto button:hover{ opacity: 1; }
+.gallery .activePhoto button.previous{
+    padding: 0 1em 0 0.7em;   /* em可以随着设备的大小不同而发生大小上的变化，他是相对的。 px是固定的大小。   你可以只通过改变body的字体大小一个值就修改了整个页面的各种宽度大小。 */
+    left: 0;
+    background: linear-gradient(to right, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0) 100%);     /*  背景渐变  background: linear-gradient(to left,#d3959b,#bfe6ba)   https://www.cnblogs.com/liangdecha/p/9797124.html */
+}
+.gallery .activePhoto button.next{
+    padding: 0 0.7em 0 1em ;
+    right: 0;
+    background: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,0.5) 100%);
+}
+
+.gallery .thumbnails{
+    display: grid;
+    grid-template-columns: repeat(auto-fill,minmax(140px,1fr));
+    grid-gap: 5px;
+}
+.gallery .thumbnails div{
+    width: 100%;
+    border: 1px solid #fff;
+    outline: 2px solid #fff;
+    cursor: pointer;
+    padding-bottom: 65%;
+    background-size: cover;   /*background-size：100% 100%;---按容器比例撑满，图片变形；   background-size：cover;---把背景图片放大到适合元素容器的尺寸，图片比例不变。*/
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 1;
+}
+.gallery .thumbnails div:hover{ opacity: 0.6; }
+.gallery .thumbnails div.active{
+    outline-color: #5c4084;
+    opacity: 1;
+}
+
+
+
+
+
+
+

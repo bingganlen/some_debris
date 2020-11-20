@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+<head><title>ceshi</title></head>
+<body>
+<input type="text" id="ddd" >
+<span class="btn-block layui-btn layui-btn-lg jtjb2 pdffile" style="cursor:default;" id="pdffile">
+            PDF数据报告下载：<span style="width: 10px;margin-left: 20px;margin-right: 20px;">  </span>
+            <a class="btn btn-info pdfbtn" onclick="window.open('<%=basePath%>label/testpdf?labelId=${conf.labelMSG.labelId}&confId=${ConfId}&langrary=0')" title="下载中文版"> 中文<b></b>   </a> <span style="width: 10px;margin-left: 20px;margin-right: 20px;"> | </span>
+            <a class="btn btn-warning pdfbtn" onclick="window.open('<%=basePath%>label/testpdf?labelId=${conf.labelMSG.labelId}&confId=${ConfId}&langrary=1')" title="PDF Download">   English <b></b></a>
+</span>
+
+<script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+<script>
+    var labelId = null;
+    // var labelId = "";
+    if (!labelId && typeof(labelId) =='undefined'  ) {//值如果为null      && labelId.toString().length==0
+        alert("值为null");
+    }
+
+
+    //<span class="btn" id="pdffile">pdf加载中<b>4</b>秒</span>
+
+    // 被点击是替换成  <span class="btn" id="pdffile">pdf加载中<b>4</b>秒</span>
+
+    function destime(val,sec){
+        if(sec<=0){
+            val.html(
+                // "<a href=\"/label/testpdf?labelId=${conf.labelMSG.labelId}&confId=${ConfId}&langrary=0\">pdf文件下载</a>"
+                "<span class=\"btn-block layui-btn layui-btn-lg jtjb2 pdffile\" style=\"cursor:default;\" id=\"pdffile\">" +
+                "            PDF数据报告下载：<span style=\"width: 10px;margin-left: 20px;margin-right: 20px;\">  </span>" +
+                "            <a class=\"btn btn-info pdfbtn\" onclick=\"window.open('<%=basePath%>label/testpdf?labelId=${conf.labelMSG.labelId}&confId=${ConfId}&langrary=0')\" title=\"下载中文版\"> 中文<b></b>   </a> <span style=\"width: 10px;margin-left: 20px;margin-right: 20px;\"> | </span>" +
+                "            <a class=\"btn btn-warning pdfbtn\" onclick=\"window.open('<%=basePath%>label/testpdf?labelId=${conf.labelMSG.labelId}&confId=${ConfId}&langrary=1')\" title=\"PDF Download\">   English <b></b></a>" +
+                "</span>"
+            );
+        }else{
+            sec--;
+            val.find("b").html(sec);
+        }
+    }
+
+    $(".pdfbtn").click(function () {
+        $("#pdffile").html(
+            "<span class=\"btn-block layui-btn layui-btn-lg jtjb2 pdffile\" style=\"cursor:default;\" id=\"pdffile\">" +
+            "            PDF数据报告下载：<span style=\"width: 10px;margin-left: 20px;margin-right: 20px;\">  </span>" +
+            "            <a class=\"btn btn-info pdfbtn\" onclick=\"window.open('<%=basePath%>label/testpdf?labelId=${conf.labelMSG.labelId}&confId=${ConfId}&langrary=0')\" title=\"下载中文版\"> pdf加载中<b>4</b>   </a> <span style=\"width: 10px;margin-left: 20px;margin-right: 20px;\"> | </span>" +
+            "            <a class=\"btn btn-warning pdfbtn\" onclick=\"window.open('<%=basePath%>label/testpdf?labelId=${conf.labelMSG.labelId}&confId=${ConfId}&langrary=1')\" title=\"PDF Download\">   pdf Down.. <b>4</b></a>" +
+            "</span>"
+        );
+        $(".pdfbtn").prop('disabled', true);
+    });
+    var intid=setInterval(function(){
+        var secin=$("#pdffile").find("b").html();
+
+        if(secin && parseInt(secin)>=0){
+            destime($("#pdffile"),secin);
+        }else{
+            $(".pdfbtn").prop('disabled', false);
+            window.clearInterval(intid);
+        }
+    },1000);
+</script>
+</body>
+
+</html>

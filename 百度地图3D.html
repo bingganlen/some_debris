@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2d和3d切换</title>
+    <style>
+        html{height:100%}
+        body{height:100%;margin:0px;padding:0px}
+        #container{height:100%}
+    </style>
+
+    <script type="text/javascript" src="http://api.map.baidu.com/api?type=webgl&v=1.0&ak=tfdVi996pGzVh3IxLmtAztoSU2EPZZ0C"></script>
+</head>
+<body>
+<div id="container"></div>
+<script type="text/javascript">
+    var map3D = new BMapGL.Map("container");    // 创建Map实例
+    map3D.centerAndZoom(new BMapGL.Point(113.49990164541272, 22.293166062973555), 19);  // 初始化地图,设置中心点坐标和地图级别
+
+    // 设置2d、3d切换
+    map3D.addControl(new BMapGL.NavigationControl3D());
+    map3D.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
+    map3D.setHeading(64.5);
+    map3D.setTilt(73);
+</script>
+</body>
+</html>

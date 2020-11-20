@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.js"></script>
+    <script src="https://cdn.staticfile.org/vue/2.4.2/vue.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <!--<script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>-->
+    <style>
+        *{margin: 0;padding: 0;}
+        b{margin: 3px;}
+        .head{margin: 0 auto;}
+        .title {
+            height: 60px;
+            line-height: 60px;
+            text-align: center;
+        }
+        .title .line {
+            display: inline-block;
+            width: 250px;
+            /*vertical-align: -4px;*/
+            border-top: 1px solid #ccc ;
+        }
+        .title .txt {
+            color: #686868;
+            vertical-align: middle;
+        }
+        .subTitle{color: #686868;text-align: center;width: 100%;}
+        #from{width: 90%; padding-left: 5%;padding-right: 5%;}
+
+        .content{
+            width: 1100px;
+            /*height: 800px;*/
+            margin: 0 auto;
+            padding-top: 30px;/*padding-left: 20%;padding-right: 20%;*/
+            background-color: #fff; opacity: 0.9;
+        }
+
+        #iframe{
+            /*min-width: 1000px;*/
+            width: 100%;
+            height: 420px;
+            /*left: 50%;*/
+            /*right: 50%;*/
+            overflow: hidden;
+        }
+        .marginbottom{margin-bottom: 10px;}
+
+        /*type.js  使用的css*/
+        .typed-cursor{
+            opacity: 1;
+            -webkit-animation: blink 0.7s infinite;
+            -moz-animation: blink 0.7s infinite;
+            animation: blink 0.7s infinite;
+        }
+        @keyframes blink{
+            0% { opacity:1; }
+            50% { opacity:0; }
+            100% { opacity:1; }
+        }
+        @-webkit-keyframes blink{
+            0% { opacity:1; }
+            50% { opacity:0; }
+            100% { opacity:1; }
+        }
+        @-moz-keyframes blink{
+            0% { opacity:1; }
+            50% { opacity:0; }
+            100% { opacity:1; }
+        }
+        /*type.js  使用的css   end*/
+    </style>
+</head>
+<!--
+    你的名字   {}
+    你打算活到几岁
+    你的生日          这些涉及到人生度过%   大概吃了几顿饭 度过多少个周末   享受过夜晚
+
+    计算规则：
+                过去了多少天，即当前天-1
+                当前星期几(0-6,0代表星期天)
+                今天过去时间百分比     (this.hour*60+this.minute)/24/60
+                本周过去时间百分比     (this.week*24*60+this.hour*60+this.minute)/7/24/60
+                这个月过去时间百分比    (this.day*24*60+this.hour*60+this.minute)/days/24/60/            (days为这个月具体多少天)
+                今年过去时间           现在时间-今年1月1好0时0分0秒000毫秒的时间
+                人生进度条            现在时间-生日时间  得出具体的毫秒值
+
+    进度条颜色安排：  20绿    bg-success
+                 20-50蓝   bg-info
+                 50-80黄   bg-warning
+                      红   bg-danger
+ -->
+<body >
+    <div class="container" id="app">
+        <div class="head">
+            <div class="title">
+                <span class="line"></span>
+                <!--名字前面可以来个图-->
+                <span class="txt">  雨夜歌曰雨歌夜 （{{age}}）</span>
+                <span class="line"></span>
+            </div>
+            <br>
+            <div class="subTitle mark">
+                <!--{{title}}   这里的名句  创建个方法  点击一下换一句 -->
+                <!--https://www.tianapi.com/apiview/26   会员免费？？？  5000个够你玩了 -->
+                <!--后台也可以专门写一个数据表  存取你喜欢的名言名句  通过随机数确定获取哪一句  -->
+
+                <span class="element"></span>
+            </div>
+        </div>
+
+        <div class="content" >
+            <div id="from">
+            <p>你的<b>人生</b>已经走了 {{age}}年   </p>
+            <div v-html="theLife()" class="marginbottom"></div>
+            <p>
+                您的生日： {{yearForYour}} 年 {{monthForYour}} 月 {{dayForYour}} 日
+                <span style="padding-left: 20px;">现中国人类平均寿命是76.34岁   这里按80岁算~_~</span>
+            </p>
+            <p>    你可能已经吃过了<b>{{youreat}}</b>, 度过了<b>{{yourweek}}</b>个愉快的周末， 以及享受过 <b>{{yourtian}}</b> 个美妙的夜晚</p>
+
+
+            <hr style="border-top:1px dashed #987cb9;" width="100%" color="#987cb9" size=1>
+            <p>今<b>天</b>已经过去了 大约 {{hour}}小时</p>
+            <div v-html="jinduT()" class="marginbottom"></div>
+
+            <p>本<b>周</b>已经过去了  {{week}}天，   这是第{{curweek}}天</p>
+            <div v-html="jinduZ()" class="marginbottom"></div>
+
+            <p>这个<b>月</b>已经过去了 {{day}}天 ，  这是第{{curday}}天</p>
+            <div v-html="jinduD()" class="marginbottom"></div>
+
+            <p>{{year}}<b>年</b>已经过去了 {{month}}个月     度过了{{outday}}天</p>  <!--{{year}}-->
+            <div v-html="jinduY()" class="marginbottom"></div>
+            </div>
+            <br>
+            <br>
+
+        </div>
+
+        <!-- clock -->
+        <iframe id="iframe" src="clock.html" scrolling="no" frameborder="0"><!--src="https://www.baidu.com"--></iframe>
+    </div>
+
+
+
+    <script>
+        var vm = new Vue({
+            el: '#app',
+            data: {
+                site: "更好的有很多很多，但刚刚好的只有你一个", //献给要过生日的某某人       这个词可以换的
+                age: "24",
+                year:"",
+                month:"",
+                day:"",
+                curday:"",
+                time:"",
+                hour:"",
+                minute:"",
+                sec:"",
+                week:"",
+                curweek:"",
+                life:"",
+                outday:"",
+                yearForYour:"1997",
+                monthForYour:"1",
+                dayForYour:"4",
+                yourtian:"",
+                youreat:"",
+                yourweek:""
+            },
+            created: function () {//这里是定时器
+                this.timer();
+                setInterval(this.timer, 60000);
+            },
+            methods: {// 我的理解是方法区和数据区
+                timer: function() {
+                    var myDate = new Date();
+                    var myYear = myDate.getFullYear(); // 获取当前年份
+                    var myMonth = myDate.getMonth() +1; // 获取当前月份
+                    var myDay = myDate.getDate(); // 获取当前日（1- 31）
+                    var myHours = myDate.getHours(); // 获取当前小时(0-23)
+                    var myMinu = myDate.getMinutes(); // 获取当前分钟(0-59)
+                    var mySec = myDate.getSeconds(); // 获取当前秒数(0-59)
+                    var myWeek = myDate.getDay(); //获取当前星期几(0-6,0代表星期天)
+
+                    // if (this.monthForYour==myMonth && this.dayForYour==myDay ){
+                    //     //祝你生日快乐  撒花     这个老兄的烟花或者自己写  https://github.com/cunzher/canvas-/blob/master/index.html
+                    // }
+
+                    this.hour = myHours;
+                    this.year = myYear;
+                    this.month = myMonth-1;
+                    this.day = myDay-1; this.curday=myDay;
+                    this.week = myWeek-1; this.curweek = myWeek;
+                    this.minute = myMinu;
+                    this.age = myYear-this.yearForYour;
+                },
+                //life
+                theLife:function(){
+                    var dt = new Date(this.yearForYour, this.monthForYour, this.dayForYour);
+                    var today = new Date();
+                    var ms = today.getTime() - dt.getTime();//parseInt((today.getTime() - dt.getTime())/86400000);
+                    this.yourtian = parseInt(ms/86400000);
+                    this.youreat = parseInt(ms/86400000)*3;
+                    this.yourweek = parseInt(ms/86400000/7);
+                    var lift = (parseInt(ms/86400000/365)/80 *100).toFixed(1);
+                    var color = this.jinduColor(lift);
+                    return "<div class='progress'> <div class='progress-bar "+ color +" progress-bar-striped progress-bar-animated' style='width:"+ lift +"%'>"+lift+"</div> </div>";
+                },
+                //今天
+                jinduT:function(){
+                    var tian = ((this.hour*60+this.minute)/24/60*100).toFixed(1); // + "%"
+                    var color = this.jinduColor(tian);
+                    return "<div class='progress'> <div class='progress-bar "+ color +" progress-bar-striped progress-bar-animated' style='width:"+ tian +"%'>"+tian+"</div> </div>";
+                },
+                //本周
+                jinduZ:function(){
+                    var curdayWithHour = (this.week*24*60+this.hour*60+this.minute)/7/24/60;
+                    var zhou = (curdayWithHour*100).toFixed(1);
+                    var color = this.jinduColor(zhou);
+                    return "<div class='progress'> <div class='progress-bar "+ color +" progress-bar-striped progress-bar-animated' style='width:"+ zhou +"%'>"+zhou+"</div> </div>";
+                },
+                //这个月
+                jinduD:function(){
+                    var days=new Date(this.year,this.month+1,0).getDate();
+                    var yue = ((this.day*24*60+this.hour*60+this.minute)/days/24/60*100).toFixed(1);  //js如何得到这个月具体多少天
+                    var color = this.jinduColor(yue);
+                    return "<div class='progress'> <div class='progress-bar "+ color +" progress-bar-striped progress-bar-animated"+ color +"' style='width:"+ yue +"%'>"+yue+"</div> </div>";
+                },
+                //年
+                jinduY:function(){
+                    var olddate = new Date(this.year, 0);
+                    var nowdate = new Date(this.year,this.month,this.day+1);
+                    var outday = (nowdate - olddate) / (1000 * 60 * 60 * 24) + 1;//
+                    this.outday = outday;//已经过去天数
+
+                    var isLeap = (0===this.year%4) && (0===this.year%100) || (0===this.year%400);
+                    var days = isLeap ? 366 : 365;//今年的天数
+                    var ye = (((outday-1)*24*60 + this.hour*60+ this.minute)/days/24/60*100).toFixed(1);
+                    var color = this.jinduColor(ye);
+                    return "<div class='progress'> <div class='progress-bar "+ color +" progress-bar-striped progress-bar-animated"+ color +"' style='width:"+ ye +"%'>"+ye+"</div> </div>";
+                },
+                jinduColor: function (value) {
+                    // 20绿    bg-success
+                    // 20-50蓝   bg-info
+                    // 50-80黄   bg-warning
+                    // 红   bg-danger
+                    if (value >= 80) {
+                        return 'bg-danger';
+                    }else if(value >= 50 && value<80){
+                        return 'bg-warning';
+                    }else if(value >= 20 && value<50){
+                        return 'bg-info';
+                    }else {
+                        return 'bg-success';
+                    }
+
+                }
+            }
+            // ,components: {
+            //     'Demo': clock  //将别名demo 变成 组件 Demo
+            // }
+
+
+        })
+    </script>
+
+    <!--typed.js  打字效果-->
+    <script src="https://cdn.bootcss.com/typed.js/2.0.5/typed.js"></script>
+    <script>
+        var title = "\"更好的有很多很多，但刚刚好的只有你一个\"&nbsp;";//测试得出这个值可以用ajax或其它方法从后台获取
+        var typed=new Typed(".element",{
+            // strings:["  ","\"更好的有很多很多，但刚刚好的只有你一个\"&nbsp;"], //看时光飞逝 我回首从前 曾经是莽撞少年 曾经度日如年 我是如此平凡却又如此幸运 我要说声谢谢你 在我生命中的每一天&nbsp;
+            strings:["  ",title], //看时光飞逝 我回首从前 曾经是莽撞少年 曾经度日如年 我是如此平凡却又如此幸运 我要说声谢谢你 在我生命中的每一天&nbsp;
+            cursorChar:"_",
+            typeSpeed:70,
+            loop:!1
+        });
+        typed.stop();
+        $(document).ready(function(){
+            $(".element").addClass("h2");
+            $(".typed-cursor").addClass("h2");
+                typed.start()
+        })
+    </script>
+    <script>
+        /**
+         * Copyright (c) 2016 hustcc
+         * License: MIT
+         * Version: v1.0.1
+         * GitHub: https://github.com/hustcc/ribbon.js
+         **/
+        !function(){function e(e,t,n){return Number(e.getAttribute(t))||n}function t(){for(r.clearRect(0,0,h,s),a=[{x:0,y:.7*s+u},{x:0,y:.7*s-u}];a[1].x<h+u;)n(a[0],a[1])}function n(e,t){r.beginPath(),r.moveTo(e.x,e.y),r.lineTo(t.x,t.y);var n=t.x+(2*p()-.25)*u,o=i(t.y);r.lineTo(n,o),r.closePath(),m-=x/-50,r.fillStyle="#"+(127*y(m)+128<<16|127*y(m+x/3)+128<<8|127*y(m+x/3*2)+128).toString(16),r.fill(),a[0]=a[1],a[1]={x:n,y:o}}function i(e){return l=e+(2*p()-1.1)*u,l>s||l<0?i(e):l}var o=document.getElementsByTagName("script"),c=o[o.length-1];config={z:e(c,"zIndex",-1),a:e(c,"alpha",.6),s:e(c,"size",90)};var a,l,d=document.createElement("canvas"),r=d.getContext("2d"),g=window.devicePixelRatio||1,h=window.innerWidth,s=window.innerHeight,u=config.s,f=Math,m=0,x=2*f.PI,y=f.cos,p=f.random;d.width=h*g,d.height=s*g,r.scale(g,g),r.globalAlpha=config.a,d.style.cssText="position:fixed;top:0;left:0;z-index: "+config.z+";width:100%;height:100%;pointer-events:none;opacity:0.5;",document.getElementsByTagName("body")[0].appendChild(d),document.onclick=t,document.ontouchstart=t,t()}();
+    </script>
+    <script>
+        //鼠标点击出现爱心特效
+        (function(window,document,undefined){
+            var hearts = [];
+            window.requestAnimationFrame = (function(){
+                return window.requestAnimationFrame ||
+                    window.webkitRequestAnimationFrame ||
+                    window.mozRequestAnimationFrame ||
+                    window.oRequestAnimationFrame ||
+                    window.msRequestAnimationFrame ||
+                    function (callback){
+                        setTimeout(callback,1000/60);
+                    }
+            })();
+            init();
+            function init(){
+                css(".heart{width: 10px;height: 10px;position: fixed;background: #f00;transform: rotate(45deg);-webkit-transform: rotate(45deg);-moz-transform: rotate(45deg);}.heart:after,.heart:before{content: '';width: inherit;height: inherit;background: inherit;border-radius: 50%;-webkit-border-radius: 50%;-moz-border-radius: 50%;position: absolute;}.heart:after{top: -5px;}.heart:before{left: -5px;}");
+                attachEvent();
+                gameloop();
+            }
+            function gameloop(){
+                for(var i=0;i<hearts.length;i++){
+                    if(hearts[i].alpha <=0){
+                        document.body.removeChild(hearts[i].el);
+                        hearts.splice(i,1);
+                        continue;
+                    }
+                    hearts[i].y--;
+                    hearts[i].scale += 0.004;
+                    hearts[i].alpha -= 0.013;
+                    hearts[i].el.style.cssText = "left:"+hearts[i].x+"px;top:"+hearts[i].y+"px;opacity:"+hearts[i].alpha+";transform:scale("+hearts[i].scale+","+hearts[i].scale+") rotate(45deg);background:"+hearts[i].color;
+                }
+                requestAnimationFrame(gameloop);
+            }
+            function attachEvent(){
+                var old = typeof window.onclick==="function" && window.onclick;
+                window.onclick = function(event){
+                    old && old();
+                    createHeart(event);
+                }
+            }
+            function createHeart(event){
+                var d = document.createElement("div");
+                d.className = "heart";
+                hearts.push({
+                    el : d,
+                    x : event.clientX - 5,
+                    y : event.clientY - 5,
+                    scale : 1,
+                    alpha : 1,
+                    color : randomColor()
+                });
+                document.body.appendChild(d);
+            }
+            function css(css){
+                var style = document.createElement("style");
+                style.type="text/css";
+                try{
+                    style.appendChild(document.createTextNode(css));
+                }catch(ex){
+                    style.styleSheet.cssText = css;
+                }
+                document.getElementsByTagName('head')[0].appendChild(style);
+            }
+            function randomColor(){
+                return "rgb("+(~~(Math.random()*255))+","+(~~(Math.random()*255))+","+(~~(Math.random()*255))+")";
+            }
+        })(window,document);
+    </script>
+
+</body>
+</html>
+

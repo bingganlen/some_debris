@@ -1,0 +1,74 @@
+<!--点击一定次数后，替换图片-->
+<!DOCTYPE html>
+<html lang="en" xmlns:v-bind="http://www.w3.org/1999/xhtml" xmlns:v-on="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>破坏瓶子</title>
+    <script src="https://cdn.staticfile.org/vue/2.4.2/vue.min.js"></script>
+    <style>
+        body{margin: 0;padding: 0;}
+        #bottle{
+            width: 150px;
+            height: 500px;
+            margin: 0 auto;
+            background: url(001.png) center no-repeat;
+            background-size: 80%;
+        }
+        #bottle.burst{ background-image: url(002.png);}
+        #state{ color: red; text-align: center; }
+        #bottle-health{
+            width: 200px;
+            border: 2px solid #000;
+            margin: 0 auto 20px auto;
+        }
+        #bottle-health div{
+            height: 10px;
+            background: #dc2b57;
+        }
+        #controls{ width: 200px; margin: 0 auto; }
+        #controls button{ margin-left: 20px; }
+    </style>
+</head>
+<body>
+<div id="app">
+    <!--图片-->
+    <div id="bottle" v-bind:class="{ burst:boole }"></div>
+    <!--提示破碎的消息-->
+    <div id="state">{{state}}</div>
+    <!--破坏进度情况-->
+    <div id="bottle-health">
+        <div v-bind:style="{width:health + '%'}"></div>
+    </div>
+    <!--按钮-->
+    <div id="controls">
+        <button v-on:click="beat" v-show="!boole">敲瓶子</button>
+        <button v-on:click="restart">重新开始</button>
+    </div>
+</div>
+
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            health:100,//进度
+            boole: false,
+            state:""
+        },
+        methods :{
+            //按钮定义的方法
+            beat:function () {
+                this.health-=10;
+                if (this.health <= 0) {
+                    this.state = "瓶子破碎了"
+                }
+            },
+            restart:function () {
+                this.health=100;
+                this.boole=false;
+            }
+        }
+    })
+</script>
+</body>
+</html>

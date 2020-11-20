@@ -1,0 +1,286 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+        #main {
+            height: 600px;width: 1000px;
+        }
+    </style>
+</head>
+<body>
+<div id="main"></div>
+
+<script src="js/baiduMap/echarts.js"></script>
+<script src="js/baiduMap/bmap.js"></script>
+
+<script src="http://libs.baidu.com/jquery/2.0.0/jquery.js"></script>
+
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=0UqXGL98FSmi22w2Rl6HK56I"></script>
+
+
+
+
+<script type="text/javascript">
+    var myChart = echarts.init(document.getElementById('main'));
+
+    var geoCoordMap = {
+        '上海': [121.4648,31.2891],
+        '包头': [110.3467,41.4899],
+        '北京': [116.4551,40.2539],
+        '大连': [122.2229,39.4409],
+        '广州': [113.5107,23.2196]
+    };
+
+    var BJData = [
+        // [{name:'北京'}, {name:'上海',value:95}],
+        // [{name:'北京'}, {name:'广州',value:90}],
+        [{name:'北京'}, {name:'大连',value:80}],
+        // [{name:'北京'}, {name:'南宁',value:70}],
+        // [{name:'北京'}, {name:'南昌',value:60}],
+        // [{name:'北京'}, {name:'拉萨',value:50}],
+        [{name:'北京'}, {name:'包头',value:30}],
+        [{name:'上海'},{name:'广州',value:30}],
+        [{name:'广州'},{name:'北京',value:30}]
+        // [{name:'北京'}, {name:'重庆',value:20}],
+        // [{name:'北京'}, {name:'常州',value:10}]
+    ];
+
+    var markerArr = [{"id":1,"title":"很好","point":"113.615562000,22.279000000","address":"上海浦东金桥","tel":"13112387262","time":"2019-12-06 14:31:39"},{"id":2,"title":"我发送的","point":"113.415562820,22.245562820","address":"珠海市 香洲区","tel":"13112387261","time":"2019-12-06 14:42:03"},{"id":3,"title":"个","point":"113.345592825,22.135500000","address":"珠海市 拱北","tel":"13112387261","time":"2019-12-06 14:47:33"},{"id":4,"title":"- 3 - ","point":"113.396666660,22.222369900","address":"珠海市  珠海大桥附近","tel":"13112387261","time":"2019-12-13 16:56:27"}];
+
+    //飞机路径   可以改 https://www.oschina.net/question/1419431_2177721.
+    var planePath = 'path://M1705.06,1318.313v-89.254l-319.9-221.799l0.073-208.063c0.521-84.662-26.629-121.796-63.961-121.491c-37.332-0.305-64.482,36.829-63.961,121.491l0.073,208.063l-319.9,221.799v89.254l330.343-157.288l12.238,241.308l-134.449,92.931l0.531,42.034l175.125-42.917l175.125,42.917l0.531-42.034l-134.449-92.931l12.238-241.308L1705.06,1318.313z';
+
+    var convertData = function (data) {
+        var res = [];
+        for (var i = 0; i < data.length; i++) {
+            var dataItem = data[i];
+            //经纬度
+            var fromCoord = geoCoordMap[dataItem[0].name];
+            var toCoord = geoCoordMap[dataItem[1].name];
+            if (fromCoord && toCoord) {
+                res.push({
+                    fromName: dataItem[0].name,
+                    toName: dataItem[1].name,
+                    coords: [fromCoord, toCoord]
+                });
+            }
+        }
+        return res;
+    };
+
+    var color = ['#a6c84c', '#ffa022', '#46bee9'];
+    var series = [];
+    // [['北京', BJData], ['上海', SHData], ['广州', GZData]].forEach(function (item, i) {
+    [['北京', BJData]].forEach(function (item, i) {
+        series.push({
+                name: item[0] + ' Top10',
+                type: 'lines',
+                coordinateSystem: 'bmap',
+                zlevel: 1,
+                effect: {
+                    show: true,
+                    period: 6,
+                    trailLength: 0.7,
+                    color: '#fff',
+                    symbolSize: 3
+                },
+                lineStyle: {
+                    normal: {
+                        color: color[i],
+                        width: 0,
+                        curveness: 0.2
+                    }
+                },
+                data: convertData(item[1])
+            },
+            {
+                name: item[0] + ' Top10',
+                type: 'lines',
+                coordinateSystem: 'bmap',
+                zlevel: 2,
+                effect: {
+                    show: true,
+                    period: 6,
+                    trailLength: 0,
+                    symbol: planePath,
+                    symbolSize: 15
+                },
+                lineStyle: {
+                    normal: {
+                        color: color[i],
+                        width: 1,
+                        opacity: 0.4,
+                        curveness: 0.2
+                    }
+                },
+                data: convertData(item[1])
+            },
+            {
+                name: item[0] + ' Top10',
+                type: 'effectScatter',
+                coordinateSystem: 'bmap',
+                zlevel: 2,
+                rippleEffect: {
+                    brushType: 'stroke'
+                },
+                label: {
+                    normal: {
+                        show: true,
+                        position: 'right',
+                        formatter: '{b}'
+                    }
+                },
+                symbolSize: function (val) {
+                    return val[2] / 8;
+                },
+                itemStyle: {
+                    normal: {
+                        color: color[i]
+                    }
+                },
+                data: item[1].map(function (dataItem) {
+                    return {
+                        name: dataItem[1].name,
+                        value: geoCoordMap[dataItem[1].name].concat([dataItem[1].value])
+                    };
+                })
+            });
+    });
+
+
+    option = {
+        backgroundColor: '#404a59',
+        title : {
+            text: '模拟迁徙',
+            subtext: '数据纯属虚构',
+            left: 'center',
+            textStyle : {
+                color: '#fff'
+            }
+        },
+        tooltip : {
+            trigger: 'item'
+        },
+        legend: {
+            orient: 'vertical',
+            top: 'bottom',
+            left: 'right',
+            data:['北京 Top10'],
+            textStyle: {
+                color: '#fff'
+            },
+            selectedMode: 'single'
+        },
+        dataRange: {
+            min: 0,
+            max: 100,
+            x: 'right',
+            calculable: true,
+            color: ['#ff3333', 'orange', 'yellow', 'lime', 'aqua'],
+            textStyle: {
+                color: '#fff'
+            }
+        },
+        bmap: {
+            center: [115.97, 29.71],
+            zoom: 8,
+            roam: true
+        },
+
+        series: series
+    };
+
+
+
+
+
+    myChart.setOption(option);
+</script>
+
+
+
+
+
+
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h3 class="panel-title">统计信息</h3>
+    </div>
+    <div class="panel-body">
+        <div class="table-responsive">
+            <table class="table table-hover table-border-no td2" style="min-width: 750px;" >
+                <tbody>
+
+                <tr >
+                    <td class=""> 温度最大值</td>
+                    <td class="tdwidth100">${conf.countMSG.tempmax} °C</td>
+                    <td><fmt:formatDate value="${conf.countMSG.tempmaxt}" pattern="yyyy-MM-dd   HH:mm"/></td>
+                </tr>
+                <tr >
+                    <td class=""> 温度最小值</td>
+                    <td class="tdwidth100">${conf.countMSG.tempmin} °C</td>
+                    <td><fmt:formatDate value="${conf.countMSG.tempmint}" pattern="yyyy-MM-dd   HH:mm"/></td>
+                </tr>
+                <tr >
+                    <td class=""> 温度平均值</td>
+                    <td class="tdwidth100"> <%--<fmt:formatNumber type="number" maxIntegerDigits="3" value="${conf.countMSG.tempAverage}" />--%>${conf.countMSG.tempAverage} °C</td>
+                </tr>
+                <tr >
+                    <td class=""> 温度MKT</td>
+                    <td class="tdwidth100">${conf.countMSG.tempMKT} °C</td>
+                </tr>
+
+                <c:if test="${not empty conf.countMSG.humAverage}">
+                    <tr >
+                        <td class=""> 湿度最大值</td>
+                        <td class="tdwidth100"><fmt:formatNumber value="${conf.countMSG.hummax}"/> %RH</td>
+                        <td><fmt:formatDate value="${conf.countMSG.hummaxt}" pattern="yyyy-MM-dd   HH:mm"/></td>
+                    </tr><tr >
+                    <td class=""> 湿度最小值</td>
+                    <td class="tdwidth100"><fmt:formatNumber value="${conf.countMSG.hummin}"/> %RH</td>
+                    <td><fmt:formatDate value="${conf.countMSG.hummint}" pattern="yyyy-MM-dd   HH:mm"/></td>
+                </tr><tr >
+                    <td class=""> 湿度平均值 </td>
+                    <td class="tdwidth100"> <%--<fmt:formatNumber type="number" maxIntegerDigits="3" value="${conf.countMSG.humAverage} " />--%><fmt:formatNumber value="${conf.countMSG.humAverage}"/>  %RH</td>
+                </tr>
+                </c:if>
+                <tr>
+                    <td class=""> 记录时长</td>
+                    <td > ${conf.countMSG.recordTimeZh}</td>
+                </tr>
+                <tr >
+                    <td class=""> 记录条数</td>
+                    <td >${conf.countMSG.recordNum} 条</td>
+                </tr>
+                <tr >
+                    <td class=""> 开始时间</td>
+                    <td >${conf.countMSG.st} </td>
+                </tr>
+                <tr >
+                    <td class="" title="结束时间"> 停止时间</td>
+                    <td >${conf.countMSG.en} </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

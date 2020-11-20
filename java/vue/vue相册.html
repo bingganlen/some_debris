@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>照片相册</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css">  <!-- 图标库 -->
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.staticfile.org/vue/2.4.2/vue.min.js"></script>
+</head>
+<body>
+<div class="header">
+    <h1>vue 简单的照片相册  定义组件模板</h1>
+</div>
+<div class="container" id="app">
+    <vue-gallery :photos="photos"></vue-gallery>
+</div>
+
+
+
+</body>
+</html>
+
+
+
+<script>
+    //vue-gallery
+    Vue.component('vue-gallery',{
+        props: ['photos'],  /*props传递图片的URL*/
+        data: function () {
+            return{
+                activePhoto:null
+            }
+        },
+        //定义模板
+        template:'<div class="gallery">\n' +
+            '    <div class="activePhoto" :style="\'background-image: url(\'+ photos[activePhoto] +\');\'">\n' +
+            '        <button type="button" class="previous" @click="previousPhoto()">\n' +
+            '            <i class="fas fa-chevron-circle-left"></i>\n' +
+            '        </button>\n' +
+            '        <button type="button" class="previous" @click="nextPhoto()">\n' +
+            '            <i class="fas fa-chevron-circle-right"></i>\n' +
+            '        </button>\n' +
+            '    </div>\n' +
+            '    <div class="thumbnails">\n' +
+            '        <div v-for="(photo,index) in photos"\n' +
+            '             :src="photo"\n' +
+            '             :key="index"\n' +
+            '             @click="changePhoto(index)"\n' +
+            '             :class="{\'active\': activePhoto == index}" \n' +
+            '             :style="\'background-image: url(\'+ photo +\');\'"\n' +
+            '                ></div>\n' +
+            '    </div>\n' +
+            '</div>',
+        mounted(){
+            this.changePhoto(0);
+            document.addEventListener("keydown", (event) => {
+                if(event.which ==37) this.previousPhoto()
+                if(event.which ==39) this.nextPhoto()
+            })
+        },
+        methods:{
+            changePhoto (index){
+              this.activePhoto = index;
+            },
+            nextPhoto(){
+                this.changePhoto(
+                    this.activePhoto+1 < this.photos.length ? this.activePhoto+1 :0
+                )
+            },
+            previousPhoto(){
+                this.changePhoto(
+                    this.activePhoto-1 >= 0 ? this.activePhoto-1 :this.photos.length-1
+                )
+            }
+        }
+    });
+
+    new Vue({
+        el: '#app',
+        data: {
+            photos:[
+                'img/001.png',
+                'img/002.png',
+                'img/003.png',
+                'img/004.png',
+                'img/005.png',
+                'img/006.png',
+                'img/007.png',
+                'img/008.png'
+            ]
+        }
+    })
+</script>

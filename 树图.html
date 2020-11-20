@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>关系图树图</title>
+    <style type="text/css">
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        .a{
+            width: 1000px;
+            height: 500px;
+            margin: auto;
+        }
+    </style>
+
+<!--<script src="../main/webapp/js/baiduMap/echarts.js"></script>-->
+</head>
+<body>
+<div class="a" id="a"></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!--<script crossorigin="anonymous" integrity="sha384-uXZwouuft09oa9YlzneS1U3NIyUAgYh8ts1VpFng0cLt1jnSqmGPmeNAwir27nXy" src="https://lib.baomitu.com/echarts/2.2.7/echarts.js"></script>
+<script crossorigin="anonymous" integrity="sha384-uDh5+DAyvfAGjCVRVrOTb/CNWSQ9/Rx6EiB0SYM1X0hF15sV4KUb93kf8azcnh8N" src="https://lib.baomitu.com/echarts/2.2.7/chart/tree.js"></script>
+<script>
+    require.config({paths:{echarts:"plugins/echarts"}});
+    require(
+        ["echarts","echarts/chart/tree"],
+        function(ec){
+            var myChart=ec.init(document.getElementById('a'));
+            var option={
+                title : {
+                    show:false
+                },
+                tooltip : {
+                    trigger: 'item',
+                    formatter: "{b}"
+                    //formatter: "{b}: {c}"
+                },
+                //那个右上角的工具栏
+                toolbox: {
+                    show : false,
+                },
+                calculable : false,
+                series : [
+                    {
+                        name:'树图',
+                        type:'tree',
+                        //排列方式，横向、纵向
+                        orient: 'vertical',
+                        //根节点的位置
+                        rootLocation: {x: 'center',y: '10%'},
+                        //连接线长度
+                        layerPadding: 30,
+                        //结点间距
+                        nodePadding: 20,
+                        //图形形状
+                        symbol: 'circle',
+                        //尺寸大小
+                        symbolSize: 40,
+                        //图的一些样式设置
+                        itemStyle: {
+                            //正常情况显示
+                            normal: {
+                                label: {
+                                    show: true,
+                                    position: 'inside',
+                                    textStyle: {
+                                        //字体颜色、大小、加粗
+                                        color: '#000',
+                                        fontSize: 15,
+                                        fontWeight:  'bolder'
+                                    }
+                                },
+                                color:'#fff',
+                                lineStyle: {
+                                    color: '#000',
+                                    width: 1,
+                                    type: 'broken'
+                                }
+                            },
+                            //鼠标移上去样式
+                            emphasis: {
+                                label: {
+                                    show: false,
+                                    textStyle:{
+                                        align:'center',
+                                        verticalAlign:'middle'
+                                    }
+                                },
+                                color:'#fff',
+                                borderWidth: 1
+                            }
+                        },
+                        data: [
+                            {
+                                name: '总',
+                                //图片大小
+                                symbolSize: [60, 80],
+                                //图片
+                                symbol: 'image://avatar.jpg',
+                                itemStyle: {
+                                    normal: {
+                                        label: {
+                                            show: false
+                                        }
+                                    }
+                                },
+                                children: [
+                                    {
+                                        name: '大子',
+                                        value: 4,
+                                        symbol: 'circle',
+                                        color:'#fff',
+                                        itemStyle: {
+                                            normal: {
+                                                label: {
+                                                    show: true,
+                                                    textStyle:{
+                                                        align:'center',
+                                                        verticalAlign:'middle'
+                                                    }
+                                                },
+                                                color:'#fff',
+                                                borderWidth: 2,
+                                                borderColor: '#00A0E9'
+                                            }
+                                        },
+                                        symbolSize: [60, 60],
+                                        children: [
+                                            {
+                                                name: '小明',
+                                                symbol: 'image://avatar.jpg',
+                                                symbolSize: [60, 80],
+                                                value: 4,
+                                                itemStyle: {
+                                                    normal: {
+                                                        label: {
+                                                            show: true,
+                                                            position: 'bottom'
+                                                        }
+                                                    }
+
+                                                }
+                                            },
+                                            {
+                                                name: '多余',
+                                                symbol: 'image://avatar.jpg',
+                                                symbolSize: [60, 80],
+                                                value: 4,
+                                                itemStyle: {
+                                                    normal: {
+                                                        label: {
+                                                            show: true,
+                                                            position: 'bottom'
+                                                        }
+                                                    }
+
+                                                }
+                                            },
+                                            {
+                                                name: '小黄',
+                                                symbol: 'image://avatar.jpg',
+                                                symbolSize: [60, 80],
+                                                value: 4,
+                                                itemStyle: {
+                                                    normal: {
+                                                        label: {
+                                                            show: true,
+                                                            position: 'bottom'
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        name: '二子',
+                                        symbol: 'circle',
+                                        symbolSize: [60, 60],
+                                        itemStyle: {
+                                            normal: {
+                                                label: {
+                                                    show: true,
+                                                    textStyle:{
+                                                        align:'center',
+                                                        verticalAlign:'middle'
+                                                    }
+                                                },
+                                                color:'#fff',
+                                                borderWidth: 2,
+                                                borderColor: '#007130'
+                                            }
+                                        },
+                                        children: [
+                                            {
+                                                name: '小明',
+                                                symbol: 'image://avatar.jpg',
+                                                symbolSize: [60, 80],
+                                                value: 4,
+                                                itemStyle: {
+                                                    normal: {
+                                                        label: {
+                                                            show: true,
+                                                            position: 'bottom'
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                name: '小黄',
+                                                symbol: 'image://avatar.jpg',
+                                                symbolSize: [60, 80],
+                                                value: 4,
+                                                itemStyle: {
+                                                    normal: {
+                                                        label: {
+                                                            show: true,
+                                                            position: 'bottom'
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        name: '大女',
+                                        symbol: 'circle',
+                                        symbolSize: [60, 60],
+                                        itemStyle: {
+                                            normal: {
+                                                label: {
+                                                    show: true,
+                                                    textStyle:{
+                                                        align:'center',
+                                                        verticalAlign:'middle'
+                                                    }
+                                                },
+                                                color:'#fff',
+                                                borderWidth: 2,
+                                                borderColor: '#AC6A00'
+                                            }
+                                        },
+                                        children: [
+                                            {
+                                                name: '小明',
+                                                symbol: 'image://avatar.jpg',
+                                                symbolSize: [60, 80],
+                                                value: 4,
+                                                itemStyle: {
+                                                    normal: {
+                                                        label: {
+                                                            show: true,
+                                                            position: 'bottom'
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                name: '小黄',
+                                                symbol: 'image://avatar.jpg',
+                                                symbolSize: [60, 80],
+                                                value: 4,
+                                                itemStyle: {
+                                                    normal: {
+                                                        label: {
+                                                            show: true,
+                                                            position: 'bottom'
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        name: '二女',
+                                        symbol: 'circle',
+                                        symbolSize: [60, 60],
+                                        itemStyle: {
+                                            normal: {
+                                                label: {
+                                                    show: true,
+                                                    textStyle:{
+                                                        align:'center',
+                                                        verticalAlign:'middle'
+                                                    }
+                                                },
+                                                color:'#fff',
+                                                borderWidth: 2,
+                                                borderColor: '#FF0000'
+                                            }
+                                        },
+                                        children: [
+                                            {
+                                                name: '小明',
+                                                symbol: 'image://avatar.jpg',
+                                                symbolSize: [60, 80],
+                                                value: 4,
+                                                itemStyle: {
+                                                    normal: {
+                                                        label: {
+                                                            show: true,
+                                                            position: 'bottom'
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                name: '小黄',
+                                                symbol: 'image://avatar.jpg',
+                                                symbolSize: [60, 80],
+                                                value: 4,
+                                                itemStyle: {
+                                                    normal: {
+                                                        label: {
+                                                            show: true,
+                                                            position: 'bottom'
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            };
+            myChart.setOption(option);
+            var ecConfig = require('echarts/config');
+        })
+</script>-->
+
+
+<script>
+    /**
+     * Copyright (c) 2016 hustcc
+     * License: MIT
+     * Version: v1.0.1
+     * GitHub: https://github.com/hustcc/ribbon.js
+     **/
+    !function(){function e(e,t,n){return Number(e.getAttribute(t))||n}function t(){for(r.clearRect(0,0,h,s),a=[{x:0,y:.7*s+u},{x:0,y:.7*s-u}];a[1].x<h+u;)n(a[0],a[1])}function n(e,t){r.beginPath(),r.moveTo(e.x,e.y),r.lineTo(t.x,t.y);var n=t.x+(2*p()-.25)*u,o=i(t.y);r.lineTo(n,o),r.closePath(),m-=x/-50,r.fillStyle="#"+(127*y(m)+128<<16|127*y(m+x/3)+128<<8|127*y(m+x/3*2)+128).toString(16),r.fill(),a[0]=a[1],a[1]={x:n,y:o}}function i(e){return l=e+(2*p()-1.1)*u,l>s||l<0?i(e):l}var o=document.getElementsByTagName("script"),c=o[o.length-1];config={z:e(c,"zIndex",-1),a:e(c,"alpha",.6),s:e(c,"size",90)};var a,l,d=document.createElement("canvas"),r=d.getContext("2d"),g=window.devicePixelRatio||1,h=window.innerWidth,s=window.innerHeight,u=config.s,f=Math,m=0,x=2*f.PI,y=f.cos,p=f.random;d.width=h*g,d.height=s*g,r.scale(g,g),r.globalAlpha=config.a,d.style.cssText="position:fixed;top:0;left:0;z-index: "+config.z+";width:100%;height:100%;pointer-events:none;opacity:0.5;",document.getElementsByTagName("body")[0].appendChild(d),document.onclick=t,document.ontouchstart=t,t()}();
+</script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!--<script crossorigin="anonymous" integrity="sha384-i+fXrQ+G3+h2478EWpSpIXivtKbbze+0SNOXJGizkAp6DVG/m2fE6hiWeDwskVvp" src="https://lib.baomitu.com/echarts/4.7.0/echarts.js"></script>
+<script>
+    var myChart=echarts.init(document.getElementById('a'));
+    //$.get(ROOT_PATH + '/data/asset/data/flare.json', function (data) {
+
+    var img ='image://avatar.jpg';
+    var data = {
+        "name":"toutou",
+        "symbolSize":50,
+        "symbol":img,
+        "children":[
+            {
+                "name":"分类一",
+                "children":[
+                    {
+                        "name": "人物1",
+                        "symbolSize": 50,
+                        "symbol":img
+                    }
+                ]
+            },
+            {
+                "name":"分类二",
+                "children":[
+                    {
+                        "name": "人物2",
+                        "symbolSize": 50,
+                        "symbol":img
+                    },
+                    {
+                        "name": "人物3",
+                        "symbolSize": 50,
+                        "symbol":img
+                    },
+                    {
+                        "name": "人物4",
+                        "symbolSize": 50,
+                        "symbol":img
+                    }
+                ]
+            }
+        ]
+    };
+
+    myChart.setOption(option = {
+        tooltip: {
+            trigger: 'item',
+            triggerOn: 'mousemove'
+        },
+        series:[
+            {
+                type: 'tree',
+
+                data: [data],
+
+                left: '2%',
+                right: '2%',
+                top: '8%',
+                bottom: '20%',
+
+                symbol: 'emptyCircle',
+
+                orient: 'vertical',
+
+                expandAndCollapse: true,
+
+                label: {
+                    position: 'top',
+                    rotate: -90,
+                    verticalAlign: 'middle',
+                    align: 'right',
+                    fontSize: 9
+                },
+
+                leaves: {
+                    label: {
+                        position: 'bottom',
+                        rotate: -90,
+                        verticalAlign: 'middle',
+                        align: 'left'
+                    }
+                },
+
+                animationDurationUpdate: 750
+            }
+        ]
+    });
+
+
+</script>-->
+
+
+
+
+
+
+
+
+
+
+
+

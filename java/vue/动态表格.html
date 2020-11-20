@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>动态表格</title>
+    <link rel="stylesheet" href="style1.css">
+    <!--<script src="https://cdn.staticfile.org/vue/2.4.2/vue.min.js"></script>-->
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+</head>
+<body>
+<div id="table">
+    <div class="add">
+        <input type="text" v-model="addDetail.title" name="title" placeholder="发布内容" />
+        <input type="text" v-model="addDetail.user" name="user" placeholder="发布人" />
+        <input type="date" v-model="addDetail.dates" name="date" placeholder="发布时间" />
+        <button @click="add">新增</button>
+    </div>
+    <table cellpadding="0" cellspacing="0">
+        <thead>
+        <tr>
+            <th>序号</th>
+            <th>标题</th>
+            <th>发布人</th>
+            <th>发布时间</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="(item,index) in newsList">
+            <td width="10%">{{index+1}}</td>
+            <td>{{item.title}}</td>
+            <td width="15%">{{item.user}}</td>
+            <td width="20%">{{item.dates}}</td>
+            <td width="15%">
+                <span @click="deletelist(item.id,index)" class="delete">删除</span>
+                <span class="edit" @click="edit(item)">编辑</span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div id="mask" v-if="editlist">
+        <div class="mask">
+            <div class="title">
+                编辑
+                <span @click="editlist=false">x</span>
+            </div>
+            <div class="content">
+                <input type="text" v-model="editDetail.title" name="title" value="" placeholder="标题" />
+                <input type="text" v-model="editDetail.user" name="user" value="" placeholder="发布人" />
+                <input type="date" v-model="editDetail.dates" name="date" value="" placeholder="发布时间" />
+                <button @click="update">更新</button>
+                <button @click="editlist=false">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var app = new Vue({
+        el: '#table',
+        data: {
+            addDetail:{},
+            editlist: false,
+            editDetail: {},
+            newsList: [{
+                title: '招聘前段工程师',
+                user: '关羽',
+                dates: '2020-08-10',
+                id: "10001"
+            }, {
+                title: '招聘PHP工程师',
+                user: '张飞',
+                dates: '2020-08-15',
+                id: "10002"
+            }],
+            editid:''
+        },
+        mounted() {},
+        methods: {
+            //新增功能
+            add:function() {
+                this.newsList.push({
+                    title: this.addDetail.title,
+                    user: this.addDetail.user,
+                    dates: this.addDetail.dates,
+                })
+            },
+            //删除功能
+            deletelist:function(id, i){
+                this.newsList.splice(i, 1);
+            },
+            //编辑功能
+            edit:function(item){
+                this.editDetail = {
+                    title: item.title,
+                    user: item.user,
+                    dates: item.dates,
+                    id: item.id
+                }
+                this.editlist = true
+                this.editid = item.id
+            },
+            //确认更新
+            update:function() {
+                let _this= this
+                for(let i = 0; i < _this.newsList.length; i++) {
+                    if(_this.newsList[i].id ==this.editid) {
+                        _this.newsList[i] = {
+                            title: _this.editDetail.title,
+                            user: _this.editDetail.user,
+                            dates: _this.editDetail.dates,
+                            id: this.editid
+                        }
+                        this.editlist = false;
+                    }
+                }
+            }
+        }
+    })
+</script>
+
+</body>
+</html>
+<!--<body>-->
+    <!--<div id="table">-->
+        <!--<div class="add">-->
+            <!--<input type="text"  v-model="addDetail.title" name="title" placeholder="发布内容"/>-->
+            <!--<input type="text"  v-model="addDetail.user" name="user" placeholder="发布人"/>-->
+            <!--<input type="date"  v-model="addDetail.dates" name="date" placeholder="发布时间"/>-->
+            <!--<button @click="add">新增</button>-->
+        <!--</div>-->
+
+        <!--<table cellpadding="0" cellspacing="0">-->
+            <!--<thead>-->
+            <!--<tr>-->
+                <!--<th>序号</th>-->
+                <!--<th>标题</th>-->
+                <!--<th>发布人</th>-->
+                <!--<th>发布时间</th>-->
+                <!--<th>操作</th>-->
+            <!--</tr>-->
+            <!--</thead>-->
+            <!--<tbody>-->
+                <!--<tr v-for="(item,index) in newList">-->
+                    <!--<td width="10%">{{index+1}}</td>-->
+                    <!--<td>{{item.title}}</td>-->
+                    <!--<td width="15%">{{item.user}}</td>-->
+                    <!--<td width="20%">{{item.dates}}</td>-->
+                    <!--<td width="15%">-->
+                        <!--<span @click="deletelist(item.id,index)" class="delete">删除</span>-->
+                        <!--<span class="edit" @click="edit(item)">编辑</span>-->
+                    <!--</td>-->
+                <!--</tr>-->
+            <!--</tbody>-->
+        <!--</table>-->
+        <!--<div class="mask" v-for="editlist">-->
+            <!--<div class="mask">-->
+                <!--<div class="title">-->
+                    <!--编辑<span @click="editlist=false">x</span>-->
+                <!--</div>-->
+                <!--<div class="content">-->
+                    <!--<input type="text"  v-model="editDetail.title" name="title" value="" placeholder="发布内容"/>-->
+                    <!--<input type="text"  v-model="editDetail.user" name="user" value="" placeholder="发布人"/>-->
+                    <!--<input type="date"  v-model="editDetail.dates" name="date" value="" placeholder="发布时间"/>-->
+                    <!--<button @click="update">更新</button>-->
+                    <!--<button @click="editlist=false">取消</button>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+
+<!--<script>-->
+    <!--var app = new Vue({-->
+        <!--el: '#table',-->
+        <!--data: {-->
+            <!--addDetail:{},-->
+            <!--editlist:false,-->
+            <!--editDetail:{},-->
+            <!--newList : [{-->
+                <!--title:'招聘PHP工程师',-->
+                <!--user:'关yu',-->
+                <!--dates:'2020-08-10',-->
+                <!--id:'10001'-->
+            <!--},-->
+            <!--{-->
+                <!--title:'招聘VUE工程师',-->
+                <!--user:'zhangfei',-->
+                <!--dates:'2020-08-09',-->
+                <!--id:'10002'-->
+            <!--}],-->
+            <!--editid:''-->
+        <!--},-->
+        <!--mounted(){},-->
+        <!--methods:{-->
+            <!--// 新增-->
+            <!--add: function () {-->
+                <!--this.newList.push({-->
+                    <!--title: this.addDetail.user,-->
+                    <!--user: this.addDetail.user,-->
+                    <!--dates: this.addDetail.dates,-->
+                <!--})-->
+            <!--},-->
+            <!--//删除-->
+            <!--deletelist: function (id, i) {-->
+                <!--this.newList.slice(i,1);-->
+            <!--},-->
+            <!--//编辑-->
+            <!--edit: function (item) {-->
+                <!--this.editDetail = {-->
+                    <!--title : item.title,-->
+                    <!--user: item.user,-->
+                    <!--dates: item.dates,-->
+                    <!--id: item.id-->
+                <!--},-->
+                <!--this.editlist = true,-->
+                <!--this.editid = item.id-->
+            <!--},-->
+            <!--//确认更新-->
+            <!--update:function () {-->
+                <!--let _this = this-->
+                <!--for (let i = 0; i < _this.newList.length; i++) {-->
+                    <!--if (_this.newList[i].id == this.editid) {-->
+                        <!--_this.newList[i] = {-->
+                            <!--title : _this.editDetail.title,-->
+                            <!--user: _this.editDetail.user,-->
+                            <!--detes: _this.editDetail.detes,-->
+                            <!--id: this.editid-->
+                        <!--},-->
+                        <!--this.editlist=false-->
+                    <!--}-->
+
+                <!--}-->
+            <!--}-->
+        <!--}-->
+    <!--})-->
+<!--</script>-->
+<!--</body>-->
+<!--</html>-->

@@ -1,0 +1,613 @@
+ 
+
+
+
+
+<%--
+<form class="layui-form x-center"  method="post" id="driverSerch">
+        <div class="layui-form-pane">
+            <div class="layui-form-item">
+                <div class="layui-input-inline form-inline" >
+
+<table class="form-group-sm" id="tableform">
+    <tr class="formtr-padding">
+        <td class="form-inline">
+            <label>设备类型：</label>
+            <select class="form-control" name="labeltype" title="下拉框选择设备类型" placeholder="请选择设备类型">
+                <option value="" selected></option>
+                <option value="NFC" <c:if test="${logHistory.labeltype == 'NFC'}">selected</c:if>>NFC</option>
+                <option value="BLE" <c:if test="${logHistory.labeltype == 'BLE'}">selected</c:if>>BLE</option>
+                <option value="USB" <c:if test="${logHistory.labeltype == 'USB'}">selected</c:if>>USB</option>
+            </select>
+
+        </td>
+        <td class="form-inline">
+            <label>报警状态：</label>
+            <select class="form-control" name="isover" >
+                <option value="-1" ></option>
+                <option value="0" <c:if test="${logHistory.isover == 0}">selected</c:if>>
+                    正常</option>
+                <option value="1" <c:if test="${logHistory.isover == 1}">selected</c:if>>
+                    报警</option>
+            </select>
+
+        <td class="form-inline">
+            <label>电池状态：</label>
+            <select class="form-control" name="dumpEnergy">
+                <option value="" selected></option>
+                <option value="2.7" <c:if test="${logHistory.dumpEnergy == 2.7}">selected</c:if>>
+                    正常</option>
+                <option value="1.0" <c:if test="${logHistory.dumpEnergy == 1.0}">selected</c:if>>
+                    低电量</option>
+            </select>
+
+        </td>
+
+        <td class="form-inline">
+            <input type="text" class="form-control" name="labelid" value="${logHistory.labelid}" title="输入序列号，可模糊查找"  placeholder="请输入序列号"/>
+        </td>
+        <td class="form-inline">
+            <input type="text" class="form-control" name="startDate" value="${logHistory.startDate}" placeholder="请选择启动时间" id="startDate"/>
+        </td>
+        <td class="form-inline">
+            <input type="text" class="form-control" name="batchtime" value="${logHistory.batchtime}" title="选择起始时间段" placeholder="请选择配置时间" id="bettime"/>
+        </td>
+        <td class="form-inline">
+            <button type="submit" class="layui-btn"  lay-submit="" lay-filter="sreach" ><i class="layui-icon">&#xe615;</i></button>
+        </td>
+
+        <td><input type="reset" class="layui-btn layui-btn-primary" style="font-size: 12px;" value="重置" onclick="toreset();"><i class="fa fa-refresh">&nbsp;</i></td>
+
+
+    </tr>
+
+</table>
+</div>
+</div>
+
+</div>
+</form>
+
+
+
+<div class="table-responsive">
+    <table class="table table-hover table-striped tablesorter tablesorter-blue" id="tableda" >
+        <thead class="layui-table"> &lt;%&ndash;layui-table&ndash;%&gt;
+        <tr>
+            <th style="text-align: center;" >序号</th>
+            <th style="text-align: center;" >设备类型</th>
+            <th style="text-align: center;" >序列号</th>
+            <th style="text-align: center;" >设备名称</th>
+            <th style="text-align: center;" >软件版本</th>
+            <th style="text-align: center;" >配置时间</th>
+            <th style="text-align: center;" >启动时间</th>
+            <th style="text-align: center;" >报警状态</th>
+            <th style="text-align: center;" >电池状态</th>
+            <th style="text-align: center;" >操作</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        <c:forEach items="${requestScope.page.beanList}" var="customer" varStatus="xh">
+            <tr class="text-center">
+                <td>${xh.count} </td>
+                <td>${customer.label[0].labelType}</td>
+                <td>${customer.labelId}</td>
+                <td>
+
+                    <c:choose>
+                        <c:when test="${not empty customer.confset[0].labelNickName}">
+                            ${customer.confset[0].labelNickName}
+                        </c:when>
+                        <c:otherwise> - </c:otherwise>
+                    </c:choose>
+                </td>
+                <td>${customer.label[0].stcFirmware}</td>
+                <td><fmt:formatDate value="${customer.batchtime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+                <td><fmt:formatDate value="${customer.startDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+                <td>
+                    <c:choose>
+                        <c:when test="${customer.isover == '1'}">
+                            报警
+                        </c:when>
+                        <c:otherwise> 正常 </c:otherwise>
+                    </c:choose>
+                </td>
+
+                <td>
+                    <c:choose>
+                        <c:when test="${customer.label[0].dumpEnergy < '2.7'}">
+                            低电量
+                        </c:when>
+                        <c:otherwise> 正常 </c:otherwise>
+                    </c:choose>
+                </td>
+
+                <td>
+                    <button class="layui-btn" onclick="role_management_edit('设备信息','/warn/show?labelId=${customer.labelId}&confId=${customer.confId}','600','1000')"><i class="layui-icon">&#xe642;</i>查看</button>
+                        &lt;%&ndash;<a href="#" onclick="return trash(${customer.id})" style="text-decoration: none;"
+                           data-toggle="modal" data-target="#trashModal">
+                            <span class="fa fa-trash-o fa-lg"></span>
+                        </a>&ndash;%&gt;
+                </td>
+            </tr>
+        </c:forEach>
+        </tbody>
+    </table>
+</div>
+
+<form class="listForm" method="post" action="<%=basePath%>/toDriver?labeltype=${logHistory.labeltype}&labelid=${logHistory.labelid}&batchtime=${logHistory.batchtime}&isover=${logHistory.isover}
+        &startDate=${logHistory.startDate}&dumpEnergy=${logHistory.dumpEnergy}&pageSize=${logHistory.pagenum}">
+
+
+    <div class="row">
+        <div class="form-inline">
+            <label style="font-size:11px;margin-top:22px;">
+                <strong>共 <b>${requestScope.page.totalCount}</b> 条记录，共<b>${requestScope.page.totalPage}</b>页</strong>
+                &nbsp;
+                &nbsp;
+                <strong>每页显示</strong>
+                <input name="pageCode" value="${requestScope.page.pageCode}" hidden="hidden"/>
+                <select class="form-control" name="pageSize">
+                    <option value="8"
+                            <c:if test="${requestScope.page.pageSize == 8}">selected</c:if> >8
+                    </option>
+                    <option value="12"
+                            <c:if test="${requestScope.page.pageSize == 12}">selected</c:if> >12
+                    </option>
+                    <option value="15"
+                            <c:if test="${requestScope.page.pageSize == 15}">selected</c:if> >15
+                    </option>
+                    <option value="20"
+                            <c:if test="${requestScope.page.pageSize == 20}">selected</c:if> >20
+                    </option>
+                </select>
+                <strong>条</strong>
+                &nbsp;
+                &nbsp;
+                <strong>到第</strong>&nbsp;<input type="text" size="3" id="page" name="pageCode"
+                                                class="form-control input-sm"
+                                                style="width:11%"/>&nbsp;<strong>页</strong>
+                &nbsp;
+                <button type="submit" class="btn btn-sm btn-info">GO!</button>
+            </label>
+
+            <ul class="pagination pagination-sm" style="float:right;">
+                <li>
+                    <a href="<%=basePath%>/toDriver?pageCode=1"><strong>首页</strong></a>
+                </li>
+                <li>
+                    <c:if test="${requestScope.page.pageCode > 8}">
+                        <a href="<%=basePath%>/toDriver?pageCode=${requestScope.page.pageCode - 1}">&laquo;</a>
+                    </c:if>
+                </li>
+
+                <!-- 写关于分页页码的逻辑 -->
+                <c:choose>
+                    <c:when test="${requestScope.page.totalPage <= 5}">
+                        <c:set var="begin" value="1"/>
+                        <c:set var="end" value="${requestScope.page.totalPage}"/>
+                    </c:when>
+                    <c:otherwise>
+                        <c:set var="begin" value="${requestScope.page.pageCode - 1}"/>
+                        <c:set var="end" value="${requestScope.page.pageCode + 3}"/>
+
+                        <!-- 头溢出 -->
+                        <c:if test="${begin < 1}">
+                            <c:set var="begin" value="1"/>
+                            <c:set var="end" value="5"/>
+                        </c:if>
+
+                        <!-- 尾溢出 -->
+                        <c:if test="${end > requestScope.page.totalPage}">
+                            <c:set var="begin" value="${requestScope.page.totalPage -4}"/>
+                            <c:set var="end" value="${requestScope.page.totalPage}"/>
+                        </c:if>
+                    </c:otherwise>
+                </c:choose>
+
+                <!-- 显示页码 -->
+                <c:forEach var="i" begin="${begin}" end="${end}">
+                    <!-- 判断是否是当前页 -->
+                    <c:if test="${i == requestScope.page.pageCode}">
+                        <li class="active"><a href="javascript:void(0);">${i}</a></li>
+                    </c:if>
+                    <c:if test="${i != requestScope.page.pageCode}">
+                        <li>
+                            <a href="<%=basePath%>/toDriver?pageCode=${i}&pageSize=${requestScope.page.pageSize}">${i}</a>
+                        </li>
+                    </c:if>
+                </c:forEach>
+
+                <li>
+                    <c:if test="${requestScope.page.pageCode < requestScope.page.totalPage}">
+                        <a href="<%=basePath%>/toDriver?pageCode=${requestScope.page.pageCode + 1}">&raquo;</a>
+                    </c:if>
+                </li>
+                <li>
+                    <a href="<%=basePath%>/toDriver?pageCode=${requestScope.page.totalPage}"><strong>末页</strong></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</form>--%>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ /**
+     * 表格排序初始化
+     *
+     * @returns
+     */
+//     function initTableSorter(){
+//         $("table").tablesorter({
+// //		widgets: ['zebra'], //表格斑马纹
+//             'headers': { 0:{sorter: false},
+//                          1: {sorter: false},
+//                          4:{sorter: false},
+//                          9:{sorter: false}
+//             }  //第一列不进行排序(索引从0开始)
+//         }).bind("sortEnd",function() { //排序完成后绑定事件
+//             //addRowNum();//为表格添加行数
+//         });
+//     }
+
+    /**
+     * 动态为表格添加序号
+     *
+     * @returns
+     */
+    // function addRowNum(){
+    //     /*$('#tableda tr').each(function(){
+    //         //行数为当前<tr>元素相对于父元素的索引+1
+    //         var rowNum = $(this).index()+1;
+    //         //将行数填入每行第一列
+    //         $(this).find('td').eq(0).text(rowNum);
+    //     });*/
+    //
+    //     var len = $('table tr').length;
+    //     for(var i = 1;i<len;i++){
+    //         $('table tr:eq('+i+') td:first').text(i);
+    //     }
+    // }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*    $("#myDriverTable").bootstrapTable({
+        url:"/toDriverdata",  //请求地址
+        cache: false,
+        contentType : "application/x-www-form-urlencoded",   //必须有
+        striped : true, //是否显示行间隔色
+        undefinedText: "空",//当数据为 undefined 时显示的字符
+        pageNumber : 1, //初始化加载第一页
+        pagination : true,//是否分页
+        sidePagination : 'server',//server:服务器端分页|client：前端分页
+        pageSize : 10,//单页记录数
+        pageList : [10, 15, 20],//可选择单页记录数
+        //sortable: false,    //是否启用排序
+        //showRefresh : true,//刷新按钮
+        //toolbar : "#toolbar",//工具栏
+        //search : true,//搜索栏
+        //strictSearch : true,
+        //uniqueId: "ID",//主键  删除修改需要
+        //showFullscreen : true,
+        smartDisplay: false,
+        queryParams : function(param) {//上传服务器的参数
+            // var temp = {
+            //     offset :param.offset + 0,// SQL语句起始索引
+            //     pageNumber : param.limit  // 每页显示数量
+            // };
+            var params = $("#driverSerch").serializeObject();
+            params.offset = param.offset + 0;
+            params.pageNumber = param.limit;
+            return params;
+        },
+        columns : [ {
+            title : '序号',
+            field : 'no',
+            align : 'center',
+            halign : 'center',
+            width:50,
+            formatter: function (value, row, index) {
+                //获取每页显示的数量
+                var pageSize=$('#myDriverTable').bootstrapTable('getOptions').pageSize;
+                //获取当前是第几页
+                var pageNumber=$('#myDriverTable').bootstrapTable('getOptions').pageNumber;
+                //返回序号，注意index是从0开始的，所以要加上1
+                return pageSize * (pageNumber - 1) + index + 1;
+            }
+        }, {
+            title : '设备类型',
+            field : 'label.labelType',
+            halign : 'center',	//表头的对齐方式
+            align : 'center',
+            width:150,
+            sortable : true
+        }, {
+            title : '序列号',
+            field : 'labelId',
+            align : 'center',
+            halign : 'center',
+            sortable : true,
+            width:200
+        },{
+            title : '设备名称',
+            field : 'confset.labelNickName',
+            align : 'center',
+            halign : 'center',
+            width:200,
+            sortable : true
+        },{
+            title : '软件版本',
+            field : 'label.stcFirmware',
+            align : 'center',
+            halign : 'center',
+            width:150,
+            sortable : true
+        },{
+            title : '配置时间',
+            field : 'confset.createTime',
+            align : 'center',
+            halign : 'center',
+            width:220,
+            formatter: function (value, row, index) {
+                return changeDateFormat(value)
+            }
+        },{
+            title : '启动时间',
+            field : 'bootTime',
+            align : 'center',
+            halign : 'center',
+            width:220,
+            formatter: function (value, row, index) {
+                return changeDateFormat(value)
+            }
+        }
+            ,{
+                title : '报警状态',
+                field : 'isover',
+                align : 'center',
+                halign : 'center',
+                width:150,
+                sortable : true,
+                formatter: function (value, row, index) {
+                    if (value > 0){
+                        return "报警";
+                    }
+                    return "正常"
+                }
+            }
+            ,{
+                title : '电池状态',
+                field : 'label.dumpEnergy',
+                align : 'center',
+                halign : 'center',
+                width:150,
+                sortable : true,
+                formatter: function (value, row, index) {
+                    if (value < '1'){
+                        return "低电量";
+                    }
+                    return "正常"
+                }
+            },{
+                title : '操作',
+                field : 'confId',
+                align : 'center',
+                halign : 'center',
+                width:250,
+                formatter: function (value, row, index) { //value代表当前单元格中的值，row代表当前行数据，index表示当前行的下标
+                    var labelIdparam = row.labelId;
+                    var confIdparam = row.confId;
+                    var html = '<button class="layui-btn" onclick="showMsg('+ '\''+ labelIdparam  +'\',\''+ confIdparam+'\')"> <i class="layui-icon">&#xe642;</i>查看</button>';
+                    //var html = '<button class="layui-btn" onclick="showMsg(' +"/warn/show?labelId="+ labelIdparam + "&confId="+ confIdparam +')"> <i class="layui-icon">&#xe642;</i>查看</button>';
+                    return html;
+                }
+
+            }
+
+
+        ],onLoadSuccess: function (data) {
+            console.log(data)
+        }
+        ,formatNoMatches: function() {
+            return "暂无数据";// 当total为0时，它就不会一值搜索
+        }
+        ,onLoadError: function () {
+            showTips("数据未搜索到匹配！");
+        }
+    });*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    $(document).ready(function () {
+            $("#mywarmTable").bootstrapTable({
+                url:"/toWarndata",  //请求地址
+                detailView:true,
+                detailFormatter:"detailFormatter",//点击展开预先执行事件
+                contentType : "application/x-www-form-urlencoded",   //必须有
+                striped : true, //是否显示行间隔色
+                pageNumber : 1, //初始化加载第一页
+                pagination : true,//是否分页
+                sidePagination : 'server',//server:服务器端分页|client：前端分页
+                pageSize : 10,//单页记录数
+                pageList : [10, 15, 20],//可选择单页记录数
+                //sortable: false,    //是否启用排序
+                //showRefresh : true,//刷新按钮
+                //toolbar : "#toolbar",//工具栏
+                //search : true,//搜索栏
+                //strictSearch : true,
+                //uniqueId: "ID",//主键  删除修改需要
+                //showFullscreen : true,
+                smartDisplay: false,
+                queryParams : function(param) {//上传服务器的参数
+                    // var temp = {
+                    //     offset :param.offset + 0,// SQL语句起始索引
+                    //     pageNumber : param.limit  // 每页显示数量
+                    // };
+                    var params = $("#warmSerch").serializeObject();
+                    params.offset = param.offset + 0;
+                    params.pageNumber = param.limit;
+                    return params;
+                },
+                columns : [ {
+                    title : '序号',
+                    field : 'no',
+                    align : 'center',
+                    halign : 'center',
+                    width:50,
+                    formatter: function (value, row, index) {
+                        //获取每页显示的数量
+                        var pageSize=$('#mywarmTable').bootstrapTable('getOptions').pageSize;
+                        //获取当前是第几页
+                        var pageNumber=$('#mywarmTable').bootstrapTable('getOptions').pageNumber;
+                        //返回序号，注意index是从0开始的，所以要加上1
+                        return pageSize * (pageNumber - 1) + index + 1;
+                    }
+                },{
+                    title : '序列号',
+                    field : 'labelId',
+                    align : 'center',
+                    halign : 'center',
+                    sortable : true,
+                    width:300
+                },{
+                    title : '数据上传的用户',
+                    field : 'userName',
+                    align : 'center',
+                    halign : 'center',
+                    width:300,
+                    sortable : true
+                },{
+                    title : '报警类型',
+                    field : 'warnType',
+                    align : 'center',
+                    halign : 'center',
+                    width:250,
+                    sortable : true
+                },{
+                    title : '上传时间',
+                    field : 'collectionTime',
+                    align : 'center',
+                    halign : 'center',
+                    width:350,
+                    formatter: function (value, row, index) {
+                        return changeDateFormat(value)
+                    }
+                }
+                    ,{
+                        title : '操作',
+                        field : 'confId',
+                        align : 'center',
+                        halign : 'center',
+                        width:350,
+                        formatter: function (value, row, index) { //value代表当前单元格中的值，row代表当前行数据，index表示当前行的下标
+                            var labelIdparam = row.labelId;
+                            var confIdparam = row.confId;
+                            var html = '<button class="layui-btn" onclick="showMsg('+ '\''+ labelIdparam  +'\',\''+ confIdparam+'\')"> <i class="layui-icon">&#xe642;</i>查看</button>';
+                            //var html = '<button class="layui-btn" onclick="showMsg(' +"/warn/show?labelId="+ labelIdparam + "&confId="+ confIdparam +')"> <i class="layui-icon">&#xe642;</i>查看</button>';
+                            return html;
+                        }
+                    }
+                ],
+                //注册加载子表的事件。注意下这里的三个参数！
+                onExpandRow: function (index, row, $detail) {
+                    initSubTable(index, row, $detail);
+                }
+                ,onLoadSuccess: function (data) {
+                    // if (data.userLogin == 1) {
+                    //     return "用户登录已失效！";//是否弹出登录窗口  必须重刷页面  登陆后如何记录刚才页面
+                    // }
+                    console.log(data);
+                }
+                ,formatNoMatches: function() {
+                    return "暂无数据";// 当total为0时，它就不会一值搜索
+                }
+                ,onLoadError: function () {
+                    showTips("数据未搜索到匹配！");
+                }
+            });
+
+            //初始化子表格(无线循环)
+            initSubTable = function (index, row, $detail) {
+                var parentid = row.id;
+                var cur_table = $detail.html('<table></table>').find('table');
+                $(cur_table).bootstrapTable({
+                    url: '/db/log/files.do',
+                    method: 'get',
+                    queryParams: { id: parentid },
+                    ajaxOptions: { id: parentid },
+                    uniqueId: "id",
+                    striped: true, //是否显示行间隔色
+                    pagination: true,//显示分页
+                    sidePagination: "client",
+                    pageNumber:1,
+                    pageSize: 15,
+                    pageList: [10, 25],
+                    columns: [{
+                        field: 'fileType',
+                        title: '文件类型'
+                    }, {
+                        field: 'fileName',
+                        title: '文件名'
+                    }, {
+                        field: 'fileDir',
+                        title: '保存目录'
+                    }, {
+                        field: 'category1',
+                        title: '推荐标签'
+                    }, {
+                        field: 'category2',
+                        title: '自定义标签'
+                    },{
+                        field: 'fileSize',
+                        title: '文件大小'
+                    },],
+                    //无线循环取子表，直到子表里面没有记录
+                    onExpandRow: function (index, row, $Subdetail) {
+                        initSubTable(index, row, $Subdetail);
+                    }
+                });
+            };
+        });
